@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class user implements Serializable {
+public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -22,14 +22,13 @@ public class user implements Serializable {
     @Column(name = "email")
     private String email;
 
-    @Column(name="login")
-    private Stri n
-    g login;
+    @Column(name = "login")
+    private String login;
 
     @Column(name = "password")
     private String password;
 
-    public user(String nome, String email, String login, String password) {
+    public User(String nome, String email, String login, String password) {
         this.nome = nome;
         this.email = email;
         this.login = login;
@@ -98,7 +97,7 @@ public class user implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        user other = (user) obj;
+        User other = (User) obj;
         if (login == null) {
             if (other.login != null)
                 return false;

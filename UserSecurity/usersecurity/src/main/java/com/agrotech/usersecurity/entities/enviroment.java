@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "enviroment")
-public class enviroment implements Serializable {
+public class Enviroment implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -16,7 +16,7 @@ public class enviroment implements Serializable {
     @Column(name = "nome")
     private String nome;
 
-    public enviroment(String nome) {
+    public Enviroment(String nome) {
         this.nome = nome;
     }
 
@@ -52,7 +52,7 @@ public class enviroment implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        enviroment other = (enviroment) obj;
+        Enviroment other = (Enviroment) obj;
         if (nome == null) {
             if (other.nome != null)
                 return false;

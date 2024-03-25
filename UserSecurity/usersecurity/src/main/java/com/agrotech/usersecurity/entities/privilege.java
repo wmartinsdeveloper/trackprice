@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "privilege")
-public class privilege implements Serializable {
+public class Privilege implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -16,7 +16,7 @@ public class privilege implements Serializable {
     @Column(name = "nome")
     private String nome;
 
-    public privilege(String nome) {
+    public Privilege(String nome) {
         this.nome = nome;
     }
 
@@ -48,7 +48,7 @@ public class privilege implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        privilege other = (privilege) obj;
+        Privilege other = (Privilege) obj;
         if (nome == null) {
             if (other.nome != null)
                 return false;

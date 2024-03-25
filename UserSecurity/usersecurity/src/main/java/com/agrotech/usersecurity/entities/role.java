@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
-public class role implements Serializable {
+public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -17,7 +17,7 @@ public class role implements Serializable {
     @Column(name = "nome")
     private String nome;
 
-    public role(String nome) {
+    public Role(String nome) {
         this.nome = nome;
     }
 
@@ -45,7 +45,7 @@ public class role implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        role other = (role) obj;
+        Role other = (Role) obj;
         if (nome == null) {
             if (other.nome != null)
                 return false;
@@ -59,3 +59,4 @@ public class role implements Serializable {
         return "role [id=" + id + ", nome=" + nome + "]";
     }
 
+}
