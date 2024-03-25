@@ -16,6 +16,9 @@ public class Privilege implements Serializable {
     @Column(name = "nome")
     private String nome;
 
+    public Privilege() {
+    }
+
     public Privilege(String nome) {
         this.nome = nome;
     }
@@ -56,10 +59,5 @@ public class Privilege implements Serializable {
             return false;
         return true;
     }
-
-
-
-    
-    
 
 }

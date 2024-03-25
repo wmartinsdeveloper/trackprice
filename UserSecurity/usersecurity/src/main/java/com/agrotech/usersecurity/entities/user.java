@@ -2,8 +2,6 @@ package com.agrotech.usersecurity.entities;
 
 import java.io.Serializable;
 
-import org.springframework.data.annotation.Id;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -27,6 +25,8 @@ public class User implements Serializable {
 
     @Column(name = "password")
     private String password;
+
+    public User(){}
 
     public User(String nome, String email, String login, String password) {
         this.nome = nome;

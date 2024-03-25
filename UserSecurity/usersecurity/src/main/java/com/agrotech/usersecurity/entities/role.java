@@ -5,7 +5,7 @@ import java.io.Serializable;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
+@Table(name = "role")
 public class Role implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -16,6 +16,9 @@ public class Role implements Serializable {
 
     @Column(name = "nome")
     private String nome;
+
+    public Role() {
+    }
 
     public Role(String nome) {
         this.nome = nome;

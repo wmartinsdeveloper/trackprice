@@ -16,6 +16,9 @@ public class Enviroment implements Serializable {
     @Column(name = "nome")
     private String nome;
 
+    public Enviroment() {
+    }
+
     public Enviroment(String nome) {
         this.nome = nome;
     }
