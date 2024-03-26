@@ -26,13 +26,53 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    public User(){}
+    @Column(name = "status")
+    private UserStatus status;
 
-    public User(String nome, String email, String login, String password) {
+    public User() {
+    }
+
+    public User(String nome, String email, String login, String password, UserStatus status) {
         this.nome = nome;
         this.email = email;
         this.login = login;
         this.password = password;
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", nome=" + nome + ", email=" + email + ", login=" + login + ", password=" + password
+                + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((login == null) ? 0 : login.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        User other = (User) obj;
+        if (login == null) {
+            if (other.login != null)
+                return false;
+        } else if (!login.equals(other.login))
+            return false;
+        return true;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
     }
 
     public Long getId() {
@@ -75,35 +115,12 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "User [id=" + id + ", nome=" + nome + ", email=" + email + ", login=" + login + ", password=" + password
-                + "]";
+    public UserStatus getStatus() {
+        return status;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((login == null) ? 0 : login.hashCode());
-        return result;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        User other = (User) obj;
-        if (login == null) {
-            if (other.login != null)
-                return false;
-        } else if (!login.equals(other.login))
-            return false;
-        return true;
+    public void setStatus(UserStatus stataus) {
+        this.status = status;
     }
 
 }
