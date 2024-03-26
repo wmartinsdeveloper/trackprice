@@ -1,11 +1,13 @@
 package com.agrotech.usersecurity.entities;
 
 import java.io.Serializable;
+import java.util.Set;
+
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "enviroment")
-public class Enviroment implements Serializable {
+@Table(name = "objects")
+public class Objects implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -16,26 +18,13 @@ public class Enviroment implements Serializable {
     @Column(name = "nome")
     private String nome;
 
-    public Enviroment() {
+    @ManyToMany(mappedBy = "objects")
+    private Set<Role> role;
+
+    public Objects() {
     }
 
-    public Enviroment(String nome) {
-        this.nome = nome;
-    }
-
-    public static long getSerialversionuid() {
-        return serialVersionUID;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
+    public Objects(String nome) {
         this.nome = nome;
     }
 
@@ -55,7 +44,7 @@ public class Enviroment implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Enviroment other = (Enviroment) obj;
+        Objects other = (Objects) obj;
         if (nome == null) {
             if (other.nome != null)
                 return false;
@@ -67,6 +56,34 @@ public class Enviroment implements Serializable {
     @Override
     public String toString() {
         return "enviroment [id=" + id + ", nome=" + nome + "]";
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Set<Role> getRole() {
+        return role;
+    }
+
+    public void setRole(Set<Role> role) {
+        this.role = role;
     }
 
 }

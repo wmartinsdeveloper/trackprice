@@ -1,6 +1,10 @@
 package com.agrotech.usersecurity.entities;
 
 import java.io.Serializable;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 
@@ -17,19 +21,20 @@ public class Role implements Serializable {
     @Column(name = "nome")
     private String nome;
 
+    @ManyToMany
+    @JoinTable(name = "Role_Privilege", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "privilege_id"))
+    private Set<Privilege> privilege;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "Role_Objects", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "objects_id"))
+    private Set<Objects> objects;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "role")
+    private Set<User> user;
+
     public Role() {
-    }
-
-    public Role(String nome) {
-        this.nome = nome;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 
     @Override
@@ -60,6 +65,63 @@ public class Role implements Serializable {
     @Override
     public String toString() {
         return "role [id=" + id + ", nome=" + nome + "]";
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Set<Privilege> getPrivilege() {
+        return privilege;
+    }
+
+    public void setPrivilege(Set<Privilege> privilege) {
+        this.privilege = privilege;
+    }
+
+    public Set<Objects> getObjects() {
+        return objects;
+    }
+
+    public void setObjects(Set<Objects> objects) {
+        this.objects = objects;
+    }
+
+    public Set<User> getUser() {
+        return user;
+    }
+
+    public void setUser(Set<User> user) {
+        this.user = user;
+    }
+
+    public Role(String nome, Set<Privilege> privilege, Set<Objects> objects, Set<User> user) {
+        this.nome = nome;
+        this.privilege = privilege;
+        this.objects = objects;
+        this.user = user;
+    }
+
+    public Role(String nome, Set<Privilege> privilege, Set<Objects> objects) {
+        this.nome = nome;
+        this.privilege = privilege;
+        this.objects = objects;
     }
 
 }

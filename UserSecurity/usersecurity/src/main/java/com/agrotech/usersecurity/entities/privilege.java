@@ -1,6 +1,8 @@
 package com.agrotech.usersecurity.entities;
 
 import java.io.Serializable;
+import java.util.Set;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -16,22 +18,18 @@ public class Privilege implements Serializable {
     @Column(name = "nome")
     private String nome;
 
+    @ManyToMany(mappedBy = "privilege")
+    private Set<Role> role;
+
     public Privilege() {
     }
 
-    public Privilege(String nome) {
+    public Privilege(String nome, Set<Role> role) {
         this.nome = nome;
+        this.role = role;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
+    public Privilege(String nome) {
         this.nome = nome;
     }
 
@@ -58,6 +56,34 @@ public class Privilege implements Serializable {
         } else if (!nome.equals(other.nome))
             return false;
         return true;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public Set<Role> getRole() {
+        return role;
+    }
+
+    public void setRole(Set<Role> role) {
+        this.role = role;
     }
 
 }

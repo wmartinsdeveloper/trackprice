@@ -3,7 +3,6 @@ package com.agrotech.usersecurity.resources;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.agrotech.usersecurity.entities.User;
-import com.agrotech.usersecurity.repositories.UserRepository;
 import com.agrotech.usersecurity.services.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,11 @@
 package com.agrotech.usersecurity.entities;
 
 import java.io.Serializable;
+import java.util.Set;
+
+import com.agrotech.usersecurity.entities.enums.UserStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.*;
 
@@ -29,15 +34,12 @@ public class User implements Serializable {
     @Column(name = "status")
     private UserStatus status;
 
-    public User() {
-    }
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "USer_Role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> role;
 
-    public User(String nome, String email, String login, String password, UserStatus status) {
-        this.nome = nome;
-        this.email = email;
-        this.login = login;
-        this.password = password;
-        this.status = status;
+    public User() {
     }
 
     @Override
@@ -119,8 +121,25 @@ public class User implements Serializable {
         return status;
     }
 
-    public void setStatus(UserStatus stataus) {
+    public void setStatus(UserStatus status) {
         this.status = status;
+    }
+
+    public Set<Role> getRole() {
+        return role;
+    }
+
+    public void setRole(Set<Role> role) {
+        this.role = role;
+    }
+
+    public User(String nome, String email, String login, String password, UserStatus status, Set<Role> role) {
+        this.nome = nome;
+        this.email = email;
+        this.login = login;
+        this.password = password;
+        this.status = status;
+        this.role = role;
     }
 
 }
