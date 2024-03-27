@@ -4,7 +4,11 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.agrotech.usersecurity.entities.enums.UserStatus;
+import com.agrotech.usersecurity.resources.dto.LoginRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -135,6 +139,10 @@ public class User implements Serializable {
         this.password = password;
         this.status = status;
         this.role = role;
+    }
+
+    public boolean isLoginMatch(LoginRequest loginRequest, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(loginRequest.password(), this.password);
     }
 
 }

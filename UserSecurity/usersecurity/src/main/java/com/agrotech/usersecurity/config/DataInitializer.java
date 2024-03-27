@@ -1,10 +1,15 @@
 package com.agrotech.usersecurity.config;
 
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.agrotech.usersecurity.entities.Objects;
 import com.agrotech.usersecurity.entities.Privilege;
@@ -15,6 +20,8 @@ import com.agrotech.usersecurity.repositories.ObjectsRepository;
 import com.agrotech.usersecurity.repositories.PrivilegeRepository;
 import com.agrotech.usersecurity.repositories.RoleRepository;
 import com.agrotech.usersecurity.repositories.UserRepository;
+
+import jakarta.transaction.Transactional;
 
 /**
  * DataInitializer
@@ -35,7 +42,11 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     RoleRepository roleRepo;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @Override
+    @Transactional
     public void run(String... args) {
 
         // Delete All registries on database
@@ -45,16 +56,17 @@ public class DataInitializer implements CommandLineRunner {
         privilegeRepo.deleteAll();
 
         // Create registers on database
-        Objects objects = new Objects("Login");
-        Privilege privilege = new Privilege("Read");
-        Role role = new Role("Administrator", Set.of(privilege), Set.of(objects));
+        // Objects objects = new Objects("Login");
+        // Privilege privilege = new Privilege("Read");
+        // Role role = new Role("Administrator", Set.of(privilege), Set.of(objects));
 
-        objectsRepo.save(objects);
-        privilegeRepo.save(privilege);
-        roleRepo.save(role);
-        userRepo.save(
-                new User("Wellington", "wfmzipi@gmail.com", "wfmzipi", "Manager1",
-                        UserStatus.TRUE, Set.of(role)));
+        // objectsRepo.save(objects);
+        // privilegeRepo.save(privilege);
+        // roleRepo.save(role);
+        // userRepo.save(
+        // new User("Wellington", "wfmzipi@gmail.com", "wfmzipi",
+        // passwordEncoder.encode("Manager1"),
+        // UserStatus.TRUE, Set.of(role)));
 
     }
 

@@ -1,5 +1,7 @@
 package com.agrotech.usersecurity.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +14,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User signIn(String email, String password) {
-        return userRepository.findByEmailAndPassword(email, password);
+    public Optional<User> Login(String email) {
+        return userRepository.findByEmail(email);
 
     }
 

@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.agrotech.usersecurity.entities.User;
 import com.agrotech.usersecurity.services.UserService;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +21,8 @@ public class UserResource {
     private UserService userService;
 
     @GetMapping("/login")
-    public ResponseEntity<User> signIn(@RequestParam String email, @RequestParam String password) {
-        User user = userService.signIn(email, password);
+    public ResponseEntity<Optional<User>> Login(@RequestParam String email, @RequestParam String password) {
+        Optional<User> user = userService.Login(email);
         return ResponseEntity.ok(user);
 
     }
