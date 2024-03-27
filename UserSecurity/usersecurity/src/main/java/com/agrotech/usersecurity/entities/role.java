@@ -2,8 +2,8 @@ package com.agrotech.usersecurity.entities;
 
 import java.io.Serializable;
 import java.util.Set;
+import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
@@ -15,18 +15,18 @@ public class Role implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-    @Column(name = "nome")
+    @Column(name = "nome", unique = true)
     private String nome;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "Role_Privilege", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "privilege_id"))
     private Set<Privilege> privilege;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "Role_Objects", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "objects_id"))
     private Set<Objects> objects;
 
@@ -71,12 +71,8 @@ public class Role implements Serializable {
         return serialVersionUID;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getNome() {
