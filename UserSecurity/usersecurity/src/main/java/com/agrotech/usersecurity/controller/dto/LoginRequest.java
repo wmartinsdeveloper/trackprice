@@ -1,4 +1,4 @@
-package com.agrotech.usersecurity.resources.dto;
+package com.agrotech.usersecurity.controller.dto;
 
 public record LoginRequest(String username, String password) {
 
