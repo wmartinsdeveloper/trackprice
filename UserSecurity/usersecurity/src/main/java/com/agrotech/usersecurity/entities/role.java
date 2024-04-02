@@ -32,7 +32,7 @@ public class Role implements Serializable {
 
     @JsonIgnore
     @ManyToMany(mappedBy = "role")
-    private Set<User> user;
+    private Set<Users> user;
 
     public Role() {
     }
@@ -99,15 +99,15 @@ public class Role implements Serializable {
         this.objects = objects;
     }
 
-    public Set<User> getUser() {
+    public Set<Users> getUser() {
         return user;
     }
 
-    public void setUser(Set<User> user) {
+    public void setUser(Set<Users> user) {
         this.user = user;
     }
 
-    public Role(String nome, Set<Privilege> privilege, Set<Objects> objects, Set<User> user) {
+    public Role(String nome, Set<Privilege> privilege, Set<Objects> objects, Set<Users> user) {
         this.nome = nome;
         this.privilege = privilege;
         this.objects = objects;

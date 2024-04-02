@@ -6,11 +6,11 @@ import java.util.UUID;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import com.agrotech.usersecurity.entities.User;
+import com.agrotech.usersecurity.entities.Users;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, UUID> {
+public interface UserRepository extends CrudRepository<Users, UUID> {
 
-    Optional<User> findByEmail(String email);
+    Optional<Users> findByEmail(String email);
 
 }

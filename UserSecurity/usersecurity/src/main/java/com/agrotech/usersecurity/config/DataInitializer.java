@@ -1,27 +1,22 @@
 package com.agrotech.usersecurity.config;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.agrotech.usersecurity.entities.Objects;
 import com.agrotech.usersecurity.entities.Privilege;
 import com.agrotech.usersecurity.entities.Role;
-import com.agrotech.usersecurity.entities.User;
-import com.agrotech.usersecurity.entities.enums.UserStatus;
+import com.agrotech.usersecurity.entities.Users;
 import com.agrotech.usersecurity.repositories.ObjectsRepository;
 import com.agrotech.usersecurity.repositories.PrivilegeRepository;
 import com.agrotech.usersecurity.repositories.RoleRepository;
 import com.agrotech.usersecurity.repositories.UserRepository;
-
-import jakarta.transaction.Transactional;
-
-/**
- * DataInitializer
- */
 
 @Configuration
 public class DataInitializer implements CommandLineRunner {
@@ -38,8 +33,7 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     RoleRepository roleRepo;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
     public void run(String... args) {
@@ -55,15 +49,13 @@ public class DataInitializer implements CommandLineRunner {
         Privilege privilege = new Privilege("Read");
         Role role = new Role("Administrator", Set.of(privilege), Set.of(objects));
 
-        System.out.println("DEBUG - INSERT");
-
         objectsRepo.save(objects);
         privilegeRepo.save(privilege);
         roleRepo.save(role);
         userRepo.save(
-                new User("Wellington", "wfmzipi@gmail.com", "wfmzipi",
+                new Users("Wellington", "wfmzipi@gmail.com", "wfmzipi",
                         passwordEncoder.encode("Manager1"),
-                        UserStatus.TRUE, Set.of(role)));
+                        Set.of(role)));
 
     }
 
