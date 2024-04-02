@@ -11,6 +11,6 @@ import com.agrotech.usersecurity.entities.User;
 @Repository
 public interface UserRepository extends CrudRepository<User, UUID> {
 
-    Optional<User> findByEmail(String email);
+    Optional<User> findByNome(String username);
 
 }
