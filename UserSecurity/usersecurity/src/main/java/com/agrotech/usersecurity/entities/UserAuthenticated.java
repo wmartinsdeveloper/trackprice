@@ -34,25 +34,39 @@ public class UserAuthenticated implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        if (user.isAccountNonExpired() == true) {
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        // TODO Auto-generated method stub
-        return true;
+        if (user.isAccountNonLocked() == true) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        // TODO Auto-generated method stub
-        return true;
+        if (user.isCredentialsNonExpired() == true) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
     public boolean isEnabled() {
-        // TODO Auto-generated method stub
-        return true;
+        if (user.isEnabled() == true) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

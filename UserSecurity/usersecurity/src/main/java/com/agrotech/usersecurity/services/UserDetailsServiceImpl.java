@@ -17,10 +17,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userService.findByEmail(email)
-                .map(user -> new UserAuthenticated(user))
-                .orElseThrow(
-                        () -> new UsernameNotFoundException("User Not Found with username: " + email));
+
+        UserDetails usr = userService.findByEmail(email).map(user -> new UserAuthenticated(user))
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + email));
+
+        if (usr.isAccountNonExpired() == true && usr.isAccountNonLocked() && usr.isCredentialsNonExpired()
+                && usr.isEnabled()) {
+            return usr;
+        } else {
+            return (UserDetails) new UsernameNotFoundException("User Not Found with username: " + email);
+        }
+
     }
 
 }
