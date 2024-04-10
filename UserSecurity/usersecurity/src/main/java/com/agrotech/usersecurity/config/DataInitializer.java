@@ -31,13 +31,15 @@ public class DataInitializer implements CommandLineRunner {
         roleRepo.deleteAll();
 
         // Create registers on database
-        Grupo role = new Grupo("ADMIN");
+        Grupo role1 = new Grupo("ROLE_ADMIN");
+        Grupo role2 = new Grupo("ROLE_USERS");
 
-        roleRepo.save(role);
+        roleRepo.save(role1);
+        roleRepo.save(role2);
         userRepo.save(
                 new Usuario("Wellington", "wfmzipi@gmail.com", "wfmzipi",
                         passwordEncoder.encode("Manager1"), true, true, true, true,
-                        Set.of(role)));
+                        Set.of(role1, role2)));
 
     }
 

@@ -1,10 +1,13 @@
 package com.agrotech.usersecurity.entities;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -56,7 +59,15 @@ public class Usuario implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.grupo;
+        List<GrantedAuthority> role = new ArrayList<>();          
+        grupo.forEach((lista) -> role.add( new SimpleGrantedAuthority(lista.getNome())));
+
+        // System.out.println("===========================================================================");
+        // role.forEach(e-> System.out.println(e));
+        // System.out.println("===========================================================================");
+
+
+        return role;
     }
 
     @Override

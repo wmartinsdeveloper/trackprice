@@ -25,7 +25,6 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
-import jakarta.annotation.PostConstruct;
 
 @Configuration
 @EnableWebSecurity
@@ -42,7 +41,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers(HttpMethod.POST, "/login").hasAuthority("ADMIN")
+                                .requestMatchers(HttpMethod.POST, "/api").hasRole("USERS")
                                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(

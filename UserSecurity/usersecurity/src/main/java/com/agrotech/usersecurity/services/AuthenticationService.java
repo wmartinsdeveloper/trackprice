@@ -12,6 +12,7 @@ public class AuthenticationService {
     }
 
     public String authenticate(Authentication authentication) {
+        System.out.println("Gerando toke ...............");
         return tokenService.generateToken(authentication);
     }
 }
