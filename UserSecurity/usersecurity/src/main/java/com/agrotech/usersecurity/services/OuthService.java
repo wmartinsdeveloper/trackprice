@@ -21,28 +21,7 @@ public class OuthService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        System.out.println(userService.findByEmail(email));
         return userService.findByEmail(email);
     }
-
-    // @Override
-    // public UserDetails loadUserByUsername(String email) throws
-    // UsernameNotFoundException {
-
-    // UserDetails usr = userService.findByEmail(email).map(user -> new
-    // UserAuthenticated(user))
-    // .orElseThrow(() -> new UsernameNotFoundException("User Not Found with
-    // username: " + email));
-
-    // if (usr.isAccountNonExpired() == true && usr.isAccountNonLocked() &&
-    // usr.isCredentialsNonExpired()
-    // && usr.isEnabled()) {
-    // return usr;
-    // } else {
-    // return (UserDetails) new UsernameNotFoundException("User Not Found with
-    // username: " + email);
-    // }
-
-    // }
 
 }
