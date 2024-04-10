@@ -7,7 +7,6 @@ import com.agrotech.usersecurity.services.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 public class AuthenticationController {
@@ -17,13 +16,6 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public String authenticate(Authentication authentication) {
-
         return authenticationService.authenticate(authentication);
     }
-
-    @GetMapping("/api")
-    public String getMethodName() {
-        return "Private Rest !";
-    }
-
 }

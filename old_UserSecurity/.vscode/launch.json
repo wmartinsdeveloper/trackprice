@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-UsersecurityApplication<usersecurity>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.agrotech.usersecurity.UsersecurityApplication",
+            "projectName": "usersecurity",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
