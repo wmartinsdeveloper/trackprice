@@ -21,9 +21,4 @@ public class AuthenticationController {
         return authenticationService.authenticate(authentication);
     }
 
-    @GetMapping("/api")
-    public String getMethodName() {
-        return "Private Rest !";
-    }
-
 }

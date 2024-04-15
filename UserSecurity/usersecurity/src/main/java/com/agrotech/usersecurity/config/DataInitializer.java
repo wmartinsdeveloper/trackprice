@@ -36,10 +36,10 @@ public class DataInitializer implements CommandLineRunner {
 
         roleRepo.save(role1);
         roleRepo.save(role2);
-        userRepo.save(
-                new Usuario("Wellington", "wfmzipi@gmail.com", "wfmzipi",
-                        passwordEncoder.encode("Manager1"), true, true, true, true,
-                        Set.of(role1, role2)));
+        // userRepo.save(
+        // new Usuario("Wellington", "wfmzipi@gmail.com", "wfmzipi",
+        // passwordEncoder.encode("Manager1"), true, true, true, true,
+        // Set.of(role1, role2)));
 
     }
 
