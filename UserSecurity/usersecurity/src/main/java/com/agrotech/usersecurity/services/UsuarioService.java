@@ -16,7 +16,8 @@ import com.agrotech.usersecurity.repositories.UsuarioRepository;
 @Service
 public class UsuarioService {
 
-    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UsuarioRepository userRepository;
