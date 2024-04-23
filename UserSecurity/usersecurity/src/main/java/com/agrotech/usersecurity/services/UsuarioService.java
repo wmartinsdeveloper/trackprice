@@ -1,9 +1,11 @@
 package com.agrotech.usersecurity.services;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,7 +34,7 @@ public class UsuarioService {
 
     public UserDetails save(Usuario usuario) {
 
-        Grupo grupo = grupoService.findByNome("ROLE_USERS");
+        Grupo grupo = grupoService.findByNome("USERS");
 
         usuario.setAccountNonExpired(true);
         usuario.setAccountNonLocked(true);

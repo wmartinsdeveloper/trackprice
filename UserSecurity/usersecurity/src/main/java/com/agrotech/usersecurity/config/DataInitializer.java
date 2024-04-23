@@ -1,5 +1,6 @@
 package com.agrotech.usersecurity.config;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,15 +32,19 @@ public class DataInitializer implements CommandLineRunner {
         roleRepo.deleteAll();
 
         // Create registers on database
-        Grupo role1 = new Grupo("ROLE_ADMIN");
-        Grupo role2 = new Grupo("ROLE_USERS");
+        Grupo role1 = new Grupo("ADMIN");
+        Grupo role2 = new Grupo("USERS");
+
+        Usuario admin = new Usuario("administrator", "admin@gmail.com", "admin", passwordEncoder.encode("Manager1"));
+        admin.setGrupo(Set.of(role1));
+        admin.setAccountNonExpired(true);
+        admin.setAccountNonLocked(true);
+        admin.setCredentialsNonExpired(true);
+        admin.setEnabled(true);
 
         roleRepo.save(role1);
         roleRepo.save(role2);
-        // userRepo.save(
-        // new Usuario("Wellington", "wfmzipi@gmail.com", "wfmzipi",
-        // passwordEncoder.encode("Manager1"), true, true, true, true,
-        // Set.of(role1, role2)));
+        userRepo.save(admin);
 
     }
 

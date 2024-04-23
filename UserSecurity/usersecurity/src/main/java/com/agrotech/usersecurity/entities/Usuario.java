@@ -164,25 +164,6 @@ public class Usuario implements UserDetails {
         this.password = password;
     }
 
-    // public Usuario(@NotBlank(message = "Nome é uma informação obrigatória.")
-    // String nome,
-    // @NotBlank(message = "E-mail é uma informação obrigatória.") String email,
-    // @NotBlank(message = "Login é uma informação obrigatória.") String username,
-    // @NotBlank(message = "Password é uma informação obrigatória.") String
-    // password, boolean isAccountNonExpired,
-    // boolean isAccountNonLocked, boolean isCredentialsNonExpired, boolean
-    // isEnabled, Set<Grupo> grupo) {
-    // this.nome = nome;
-    // this.email = email;
-    // this.username = username;
-    // this.password = password;
-    // this.isAccountNonExpired = isAccountNonExpired;
-    // this.isAccountNonLocked = isAccountNonLocked;
-    // this.isCredentialsNonExpired = isCredentialsNonExpired;
-    // this.isEnabled = isEnabled;
-    // this.grupo = grupo;
-    // }
-
     public Usuario() {
     }
 

@@ -36,10 +36,9 @@ public class TokenService {
                 .claim("scope", scope)
                 .build();
 
-
         return encoder.encode(
                 JwtEncoderParameters.from(claims))
                 .getTokenValue();
     }
 
-}  
+}
