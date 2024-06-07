@@ -12,4 +12,5 @@ public interface GrupoRepository extends CrudRepository<Grupo, UUID> {
 
     Grupo findByNome(String nome);
 
+    boolean existsByNome(String nome);
 }

@@ -7,9 +7,7 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -19,8 +17,6 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
@@ -51,14 +47,17 @@ public class SecurityConfig {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
         requestHandler.setCsrfRequestAttributeName("_csrf");
 
-        http.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        http.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Disabling Cookie
+                                                                                                    // JSESSION and
+                                                                                                    // implemente JWT
                 .csrf(csrf -> csrf.csrfTokenRequestHandler(requestHandler)
                         .ignoringRequestMatchers("/register", "/login")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
+                // .addFilterBefore(new CustomFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers("/register", "/login").permitAll()
-                                .requestMatchers("/admin").hasRole("ADMIN")
+                                .requestMatchers("/admin").hasAuthority("SCOPE_ADMIN")
                                 .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .oauth2ResourceServer(
@@ -67,20 +66,30 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        final JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        // here choose a claim name where you stored authorities on login (defaults
-        // to
-        // "scope" and "scp" if not used)
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
-        // here choose a scope prefix (defaults to "SCOPE_" if not used)
-        grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+    /*
+     * The bean bellow is responsable for customize how spring security will handle
+     * the prefixs from incoming request
+     * and the claim name where the authorities are stored on the token.
+     * If you want to change the prefix or the claim name customize the method
+     * bellow.
+     */
 
-        final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-        return jwtAuthenticationConverter;
-    }
+    // @Bean
+    // public JwtAuthenticationConverter jwtAuthenticationConverter() {
+    // final JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new
+    // JwtGrantedAuthoritiesConverter();
+    // // here choose a claim name where you stored authorities on login (defaults
+    // // to
+    // // "scope" and "scp" if not used)
+    // grantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
+    // // here choose a scope prefix (defaults to "SCOPE_" if not used)
+    // grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+
+    // final JwtAuthenticationConverter jwtAuthenticationConverter = new
+    // JwtAuthenticationConverter();
+    // jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+    // return jwtAuthenticationConverter;
+    // }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
@@ -96,7 +105,6 @@ public class SecurityConfig {
 
     @Bean
     PasswordEncoder passwordEncoder() {
-
         return new BCryptPasswordEncoder();
     }
 

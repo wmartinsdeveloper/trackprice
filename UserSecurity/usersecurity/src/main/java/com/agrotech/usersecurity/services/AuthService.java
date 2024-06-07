@@ -12,16 +12,29 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class OuthService implements UserDetailsService {
+public class AuthService implements UserDetailsService {
     private final UsuarioService userService;
 
-    public OuthService(UsuarioService userService) {
+    public AuthService(UsuarioService userService) {
         this.userService = userService;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return userService.findByEmail(email);
+
+        try {
+            UserDetails user = userService.findByEmail(email);
+            if (user == null) {
+                throw new UsernameNotFoundException(email);
+            } else {
+                return user;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        }
+
     }
 
 }

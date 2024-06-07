@@ -1,5 +1,6 @@
 package com.agrotech.usersecurity.repositories;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.repository.CrudRepository;
@@ -12,5 +13,7 @@ import com.agrotech.usersecurity.entities.Usuario;
 public interface UsuarioRepository extends CrudRepository<Usuario, UUID> {
 
     UserDetails findByEmail(String email);
+
+    boolean existsByEmail(String email);
 
 }

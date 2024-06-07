@@ -1,7 +1,5 @@
 package com.agrotech.usersecurity.controller;
 
-import java.net.http.HttpRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +37,7 @@ public class RegisterController {
 
         } catch (Exception e) {
             response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error to save user ! </br>" + e.getMessage());
+                    .body("<h1>Error to save the user ! </h1></br>" + e.getMessage());
         }
 
         return response;

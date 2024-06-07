@@ -65,7 +65,7 @@ public class Grupo implements GrantedAuthority {
     }
 
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
     public void setNome(String nome) {
