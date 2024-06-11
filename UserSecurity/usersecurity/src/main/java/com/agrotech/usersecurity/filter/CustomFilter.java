@@ -2,7 +2,6 @@ package com.agrotech.usersecurity.filter;
 
 import java.io.IOException;
 
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import jakarta.servlet.FilterChain;

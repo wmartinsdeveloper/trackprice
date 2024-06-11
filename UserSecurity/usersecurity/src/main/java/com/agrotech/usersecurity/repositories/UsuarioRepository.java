@@ -1,6 +1,5 @@
 package com.agrotech.usersecurity.repositories;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.repository.CrudRepository;

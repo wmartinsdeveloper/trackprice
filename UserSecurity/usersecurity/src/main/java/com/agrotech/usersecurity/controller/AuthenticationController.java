@@ -24,6 +24,7 @@ public class AuthenticationController {
         public ResponseEntity<Void> authenticate(Authentication authentication) {
 
                 try {
+
                         if (authentication.isAuthenticated()) {
                                 httpServletResponse.setHeader("Authorization",
                                                 authenticationService.authenticate(authentication));
@@ -32,7 +33,6 @@ public class AuthenticationController {
                                 return ResponseEntity.notFound().build();
                         }
                 } catch (Exception e) {
-                        // TODO Auto-generated catch block
                         // e.printStackTrace();
                         return ResponseEntity.notFound().build();
                 }
