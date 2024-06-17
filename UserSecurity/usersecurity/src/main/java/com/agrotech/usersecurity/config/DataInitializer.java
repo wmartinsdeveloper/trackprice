@@ -44,7 +44,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         Usuario admin = new Usuario("admin@gmail.com", "admin", passwordEncoder.encode("Manager1"));
-        admin.setGrupo(Set.of(grupo1));
+        admin.setGrupo(Set.of(grupo1,grupo2));
         admin.setAccountNonExpired(true);
         admin.setAccountNonLocked(true);
         admin.setCredentialsNonExpired(true);
