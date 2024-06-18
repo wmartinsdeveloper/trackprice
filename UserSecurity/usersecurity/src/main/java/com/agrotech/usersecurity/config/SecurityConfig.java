@@ -1,7 +1,10 @@
 package com.agrotech.usersecurity.config;
 
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
@@ -10,6 +13,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,10 +29,20 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.agrotech.usersecurity.filter.JWTTokenGeneratorFilter;
 import com.agrotech.usersecurity.filter.JWTTokenValidatorFilter;
+import com.nimbusds.jose.jwk.JWK;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+    @Value("${jwt.public.key}")
+    private RSAPublicKey publicKey;
+
+    @Value("${jwt.private.key}")
+    private RSAPrivateKey privateKey;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,7 +54,7 @@ public class SecurityConfig {
                                                                                                     // implemente JWT
                 .csrf(csrf -> csrf.csrfTokenRequestHandler(requestHandler)
                         .ignoringRequestMatchers("/register", "/login")
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))                
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
                 .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(
@@ -45,8 +62,8 @@ public class SecurityConfig {
                                 .requestMatchers("/register", "/login").permitAll()
                                 .requestMatchers("/admin").hasAuthority("ADMIN")
                                 .anyRequest().authenticated())
-//               .formLogin(Customizer.withDefaults())
-               .httpBasic(Customizer.withDefaults());
+                // .formLogin(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults());
 
         return http.build();
     }
@@ -68,7 +85,18 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-  
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(publicKey).build();
+    }
+
+    @Bean
+    public JwtEncoder jwtEncoder() {
+        JWK jwk = new RSAKey.Builder(this.publicKey).privateKey(privateKey).build();
+        var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
+    }
+
     /*
      * The bean bellow is responsable for customize how spring security will handle
      * the prefixs from incoming request
@@ -79,19 +107,17 @@ public class SecurityConfig {
 
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
-    final JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new
-    JwtGrantedAuthoritiesConverter();
-    // here choose a claim name where you stored authorities on login (defaults
-    // to
-    // "scope" and "scp" if not used)
-    grantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
-    // here choose a scope prefix (defaults to "SCOPE_" if not used)
-    grantedAuthoritiesConverter.setAuthorityPrefix("SCOPE_");
+        final JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+        // here choose a claim name where you stored authorities on login (defaults
+        // to
+        // "scope" and "scp" if not used)
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
+        // here choose a scope prefix (defaults to "SCOPE_" if not used)
+        grantedAuthoritiesConverter.setAuthorityPrefix("SCOPE_");
 
-    final JwtAuthenticationConverter jwtAuthenticationConverter = new
-    JwtAuthenticationConverter();
-    jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-    return jwtAuthenticationConverter;
+        final JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+        return jwtAuthenticationConverter;
     }
 
 }
