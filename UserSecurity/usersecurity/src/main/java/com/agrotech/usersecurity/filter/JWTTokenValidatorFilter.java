@@ -24,11 +24,13 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
+    private final Long getTokenExpireIn;
 
-    public JWTTokenValidatorFilter(JwtEncoder jwtEncoder, JwtDecoder jwtDecoder) {
+    public JWTTokenValidatorFilter(JwtEncoder jwtEncoder, JwtDecoder jwtDecoder, Long getTokenExpireIn) {
         this.jwtEncoder = jwtEncoder;
         this.jwtDecoder = jwtDecoder;
-        jwtTokenService = new JwtTokenService(this.jwtEncoder, this.jwtDecoder);
+        this.getTokenExpireIn = getTokenExpireIn;
+        jwtTokenService = new JwtTokenService(this.jwtEncoder, this.jwtDecoder, this.getTokenExpireIn);
     }
 
     @Override

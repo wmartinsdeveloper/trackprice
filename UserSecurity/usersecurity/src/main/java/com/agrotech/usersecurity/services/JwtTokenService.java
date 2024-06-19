@@ -43,10 +43,12 @@ public class JwtTokenService {
 
     private final JwtEncoder jwtEncoder;
     private final JwtDecoder jwtDecoder;
+    private final Long getTokenExpireIn;
 
-    public JwtTokenService(JwtEncoder jwtEncoder, JwtDecoder jwtDecoder) {
+    public JwtTokenService(JwtEncoder jwtEncoder, JwtDecoder jwtDecoder, Long getTokenExpireIn) {
         this.jwtEncoder = jwtEncoder;
         this.jwtDecoder = jwtDecoder;
+        this.getTokenExpireIn = getTokenExpireIn;
     }
 
     public String TokenCreation(Authentication authentication) {
@@ -58,7 +60,7 @@ public class JwtTokenService {
                 .claim("username", authentication.getName())
                 .claim("authorities", populateAuthorities(authentication.getAuthorities()))
                 .issuedAt(now)
-                .expiresAt(now.plusSeconds(300L))
+                .expiresAt(now.plusSeconds(getTokenExpireIn))
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }

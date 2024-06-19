@@ -44,6 +44,9 @@ public class SecurityConfig {
     @Value("${jwt.private.key}")
     public RSAPrivateKey privateKey;
 
+    @Value("${jwt.token.expirein.time}")
+    public String tokenExpireIn;
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
@@ -55,9 +58,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.csrfTokenRequestHandler(requestHandler)
                         .ignoringRequestMatchers("/register", "/login")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-                .addFilterBefore(new JWTTokenValidatorFilter(jwtEncoder(), jwtDecoder()),
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtEncoder(), jwtDecoder(), getTokenExpireIn()),
                         BasicAuthenticationFilter.class)
-                .addFilterAfter(new JWTTokenGeneratorFilter(jwtEncoder(), jwtDecoder()),
+                .addFilterAfter(new JWTTokenGeneratorFilter(jwtEncoder(), jwtDecoder(), getTokenExpireIn()),
                         BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         auth -> auth
@@ -97,6 +100,11 @@ public class SecurityConfig {
         JWK jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
         var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
+    }
+
+    @Bean
+    public Long getTokenExpireIn() {
+        return Long.parseLong(this.tokenExpireIn);
     }
 
     /*
