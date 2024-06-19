@@ -39,10 +39,10 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 public class SecurityConfig {
 
     @Value("${jwt.public.key}")
-    private RSAPublicKey publicKey;
+    public RSAPublicKey publicKey;
 
     @Value("${jwt.private.key}")
-    private RSAPrivateKey privateKey;
+    public RSAPrivateKey privateKey;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -55,8 +55,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.csrfTokenRequestHandler(requestHandler)
                         .ignoringRequestMatchers("/register", "/login")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
-                .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
-                .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new JWTTokenValidatorFilter(jwtEncoder(), jwtDecoder()),
+                        BasicAuthenticationFilter.class)
+                .addFilterAfter(new JWTTokenGeneratorFilter(jwtEncoder(), jwtDecoder()),
+                        BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers("/register", "/login").permitAll()
@@ -81,7 +83,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -92,7 +94,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtEncoder jwtEncoder() {
-        JWK jwk = new RSAKey.Builder(this.publicKey).privateKey(privateKey).build();
+        JWK jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
         var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
     }
