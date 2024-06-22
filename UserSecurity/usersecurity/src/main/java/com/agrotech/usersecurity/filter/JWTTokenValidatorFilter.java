@@ -26,6 +26,16 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
     private final JwtDecoder jwtDecoder;
     private final Long getTokenExpireIn;
 
+    /*
+     * Constructor that initializes the filter with the required dependencies.
+     * 
+     * @param jwtEncoder the JWT encoder
+     * 
+     * @param jwtDecoder the JWT decoder
+     * 
+     * @param getTokenExpireIn the token expiration time in milliseconds
+     */
+
     public JWTTokenValidatorFilter(JwtEncoder jwtEncoder, JwtDecoder jwtDecoder, Long getTokenExpireIn) {
         this.jwtEncoder = jwtEncoder;
         this.jwtDecoder = jwtDecoder;
@@ -36,6 +46,16 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
             FilterChain filterChain) throws ServletException, IOException {
+
+        /**
+         * Example: If the request header contains a JWT token, validate it and set the
+         * authentication.
+         * 
+         * Request Header: Authorization: Bearer <JWT_TOKEN>
+         * 
+         * If the token is valid, the authentication will be set in the
+         * SecurityContextHolder.
+         */
 
         if (null != request.getHeader(SecurityConstants.JWT_HEADER)) {
             try {
@@ -53,6 +73,11 @@ public class JWTTokenValidatorFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
+        /**
+         * Example: Do not filter requests to the /login endpoint.
+         * 
+         * This allows the login endpoint to be accessed without requiring a JWT token.
+         */
         return request.getServletPath().equals("/login");
     }
 

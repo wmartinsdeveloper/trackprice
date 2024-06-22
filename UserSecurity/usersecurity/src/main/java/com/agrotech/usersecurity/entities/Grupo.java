@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "grupo")
@@ -16,9 +17,10 @@ public class Grupo implements GrantedAuthority {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @NotBlank(message = "E-mail é uma informação obrigatória.")
     @Column(name = "nome", unique = true)
     private String nome;
 
@@ -60,7 +62,7 @@ public class Grupo implements GrantedAuthority {
         return serialVersionUID;
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 

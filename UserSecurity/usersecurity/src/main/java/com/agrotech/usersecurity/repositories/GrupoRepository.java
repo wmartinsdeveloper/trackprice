@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.agrotech.usersecurity.entities.Grupo;
 
 @Repository
-public interface GrupoRepository extends CrudRepository<Grupo, UUID> {
+public interface GrupoRepository extends CrudRepository<Grupo, Long> {
 
     Grupo findByNome(String nome);
 

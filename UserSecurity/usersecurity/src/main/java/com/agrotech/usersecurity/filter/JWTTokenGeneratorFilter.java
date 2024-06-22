@@ -24,6 +24,15 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
     private final JwtDecoder jwtDecoder;
     private final Long getTokenExpireIn;
 
+    /*
+     * Constructor for JWTTokenGeneratorFilter.
+     * 
+     * @param jwtEncoder the JWT encoder
+     * 
+     * @param jwtDecoder the JWT decoder
+     * 
+     * @param getTokenExpireIn the token expiration time in milliseconds
+     */
     public JWTTokenGeneratorFilter(JwtEncoder jwtEncoder, JwtDecoder jwtDecoder, Long getTokenExpireIn) {
         this.jwtEncoder = jwtEncoder;
         this.jwtDecoder = jwtDecoder;
@@ -31,6 +40,20 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
         jwtTokenService = new JwtTokenService(this.jwtEncoder, this.jwtDecoder, this.getTokenExpireIn);
     }
 
+    /*
+     * Generates a JWT token for authenticated requests and sets it as a response
+     * header.
+     * 
+     * @param request the HTTP request
+     * 
+     * @param response the HTTP response
+     * 
+     * @param filterChain the filter chain
+     * 
+     * @throws ServletException if an error occurs
+     * 
+     * @throws IOException if an error occurs
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
@@ -43,6 +66,13 @@ public class JWTTokenGeneratorFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /*
+     * Determines whether the filter should be skipped for a given request.
+     * 
+     * @param request the HTTP request
+     * 
+     * @return true if the filter should be skipped, false otherwise
+     */
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         return !request.getServletPath().equals("/login");

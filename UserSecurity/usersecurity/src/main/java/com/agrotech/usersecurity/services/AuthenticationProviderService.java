@@ -20,14 +20,24 @@ public class AuthenticationProviderService implements AuthenticationProvider {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /*
+     * Authenticates a user based on the provided email and password.
+     *
+     * @param authentication the authentication object containing the email and
+     * password
+     * 
+     * @return an authenticated user object if the credentials are valid, null
+     * otherwise
+     * 
+     * @throws AuthenticationException if the authentication fails
+     */
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         try {
             UserDetails user = usuarioService.findByEmail(authentication.getName());
             if (user != null) {
                 if (passwordEncoder.matches((String) authentication.getCredentials(), user.getPassword())) {
-                    // List<GrantedAuthority> authorities = new ArrayList<>();
-                    // authorities.add(new SimpleGrantedAuthority(user.getAuthorities()));
                     return new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());
                 } else {
                     throw new BadCredentialsException("Invalid password ! Check it and try again.");
@@ -41,11 +51,17 @@ public class AuthenticationProviderService implements AuthenticationProvider {
         }
     }
 
+    /**
+     * Checks if this authentication provider supports the given authentication
+     * class.
+     *
+     * @param authentication the authentication class to check
+     * @return true if this provider supports the given class, false otherwise
+     */
+
     @Override
     public boolean supports(Class<?> authentication) {
         return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication));
     }
-
-
 
 }

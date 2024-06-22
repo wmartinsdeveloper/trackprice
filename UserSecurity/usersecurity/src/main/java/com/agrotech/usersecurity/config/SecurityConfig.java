@@ -56,7 +56,7 @@ public class SecurityConfig {
                                                                                                     // JSESSION and
                                                                                                     // implemente JWT
                 .csrf(csrf -> csrf.csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/register", "/login")
+                        .ignoringRequestMatchers("/register/**", "/login", "/admin/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterBefore(new JWTTokenValidatorFilter(jwtEncoder(), jwtDecoder(), getTokenExpireIn()),
                         BasicAuthenticationFilter.class)
@@ -64,8 +64,8 @@ public class SecurityConfig {
                         BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/register", "/login").permitAll()
-                                .requestMatchers("/admin").hasAuthority("ADMIN")
+                                .requestMatchers("/register/**", "/login").permitAll()
+                                .requestMatchers("/admin/**").hasAuthority("ADMIN")
                                 .anyRequest().authenticated())
                 // .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
