@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -134,7 +133,7 @@ public class Usuario implements UserDetails {
     }
 
     public Set<Grupo> getGrupo() {
-        return grupo;
+        return this.grupo;
     }
 
     public void setGrupo(Set<Grupo> grupo) {
@@ -157,7 +156,7 @@ public class Usuario implements UserDetails {
         return "Usuario [id=" + id + ", email=" + email + ", username=" + username + ", password="
                 + password + ", isAccountNonExpired=" + isAccountNonExpired + ", isAccountNonLocked="
                 + isAccountNonLocked + ", isCredentialsNonExpired=" + isCredentialsNonExpired + ", isEnabled="
-                + isEnabled + ", grupo=" + grupo + "]";
+                + isEnabled + "]";
     }
 
     @Override

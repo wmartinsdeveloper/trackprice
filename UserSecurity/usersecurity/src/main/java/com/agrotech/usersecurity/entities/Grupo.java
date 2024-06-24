@@ -1,8 +1,6 @@
 package com.agrotech.usersecurity.entities;
 
 import java.util.Set;
-import java.util.UUID;
-
 import org.springframework.security.core.GrantedAuthority;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -55,7 +53,7 @@ public class Grupo implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return "role [id=" + id + ", nome=" + nome + "]";
+        return "grupo [id=" + id + ", nome=" + nome + "]";
     }
 
     public static long getSerialversionuid() {

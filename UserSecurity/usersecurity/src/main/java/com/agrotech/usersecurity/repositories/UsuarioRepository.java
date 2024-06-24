@@ -12,13 +12,11 @@ import com.agrotech.usersecurity.entities.Usuario;
 @Repository
 public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
 
-    UserDetails findByEmail(String email);
+    Usuario findByEmail(String email);
 
     boolean existsByEmail(String email);
 
     List<Usuario> findAll();
-
-    void deleteByEmail(String email);
 
     void save(Optional<Usuario> savedUsuario);
 

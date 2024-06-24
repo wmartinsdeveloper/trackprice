@@ -26,10 +26,10 @@ public class UsuarioService {
     @Autowired
     private GrupoService grupoService;
 
-    public UserDetails findByEmail(String email) throws UsernameNotFoundException, Exception {
+    public Usuario findByEmail(String email) throws UsernameNotFoundException, Exception {
 
         try {
-            UserDetails user = userRepository.findByEmail(email);
+            Usuario user = userRepository.findByEmail(email);
             if (user != null) {
                 return user;
             } else {
@@ -56,7 +56,7 @@ public class UsuarioService {
 
     }
 
-    public UserDetails save(Usuario usuario, String grupo, boolean isEnabled) {
+    public Usuario save(Usuario usuario, String grupo, boolean isEnabled) {
 
         Grupo grupoUsr = grupoService.findByNome(grupo);
 
@@ -72,11 +72,11 @@ public class UsuarioService {
     }
 
     public void delete(Usuario usuario) {
-        userRepository.delete(usuario);
+        usuario.setEnabled(false);
+        userRepository.save(usuario);
     }
 
     public void update(Usuario savedUsuario) {
-        System.out.println(savedUsuario);
         userRepository.save(savedUsuario);
     }
 
