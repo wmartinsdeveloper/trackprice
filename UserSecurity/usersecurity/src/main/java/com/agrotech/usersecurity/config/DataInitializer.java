@@ -32,14 +32,16 @@ public class DataInitializer implements CommandLineRunner {
          */
 
         // Create registers on database
-        Grupo grupo1 = new Grupo("ADMIN");
-        Grupo grupo2 = new Grupo("USERS");
+        Grupo grupo1 = grupoRepo.findByNome("ADMIN");
+        Grupo grupo2 = grupoRepo.findByNome("USERS");
 
-        if (!grupoRepo.existsByNome(grupo1.getNome())) {
+        if (grupo1 == null) {
+            grupo1= new Grupo("ADMIN");
             grupoRepo.save(grupo1);
         }
 
-        if (!grupoRepo.existsByNome(grupo2.getNome())) {
+        if (grupo2 == null) {
+            grupo2= new Grupo("USERS");
             grupoRepo.save(grupo2);
         }
 

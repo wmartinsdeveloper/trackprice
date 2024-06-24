@@ -56,7 +56,7 @@ public class SecurityConfig {
                                                                                                     // JSESSION and
                                                                                                     // implemente JWT
                 .csrf(csrf -> csrf.csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/register/**", "/login", "/admin/**")
+                        .ignoringRequestMatchers("/register/**", "/login", "/admin/**", "/user/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterBefore(new JWTTokenValidatorFilter(jwtEncoder(), jwtDecoder(), getTokenExpireIn()),
                         BasicAuthenticationFilter.class)

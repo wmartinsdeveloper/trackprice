@@ -216,11 +216,40 @@ public class ManagerUsersController {
 
         } catch (Exception e) {
             response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error to update group of user." + e.getMessage());
+        }
+
+        return response;
+
+    }
+
+
+    @PutMapping("/user/changepassword/{email}")
+    public ResponseEntity changePasswordUser(@RequestBody Usuario usuario, @PathVariable("email") String email) {
+
+        ResponseEntity response = null;
+
+        try {
+            Usuario savedUsuario = usuarioService.findByEmail(email);
+
+            if (savedUsuario != null) {
+                savedUsuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+                usuarioService.update(savedUsuario);
+                response = ResponseEntity.status(HttpStatus.OK).body("Password Updated.");
+            } else {
+                response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
+            }
+
+        } catch (Exception e) {
+            response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error to update user." + e.getMessage());
         }
 
         return response;
 
     }
+
+
+
 
 }
