@@ -3,10 +3,13 @@ package com.agrotech.usersecurity.config;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Arrays;
+import java.util.Properties;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,15 +41,31 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    /**
+     * RSA public key for JWT token signing.
+     */
     @Value("${jwt.public.key}")
     public RSAPublicKey publicKey;
 
+    /**
+     * RSA private key for JWT token signing.
+     */
     @Value("${jwt.private.key}")
     public RSAPrivateKey privateKey;
 
+    /**
+     * Token expiration time in seconds.
+     */
     @Value("${jwt.token.expirein.time}")
     public String tokenExpireIn;
 
+    /**
+     * Creates a security filter chain for the application.
+     *
+     * @param http HTTP security builder
+     * @return Security filter chain
+     * @throws Exception if an error occurs
+     */    
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
@@ -56,7 +75,7 @@ public class SecurityConfig {
                                                                                                     // JSESSION and
                                                                                                     // implemente JWT
                 .csrf(csrf -> csrf.csrfTokenRequestHandler(requestHandler)
-                        .ignoringRequestMatchers("/register/**", "/login", "/admin/**", "/user/**")
+                        .ignoringRequestMatchers("/register/**", "/login/**", "/admin/**", "/usuario/**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterBefore(new JWTTokenValidatorFilter(jwtEncoder(), jwtDecoder(), getTokenExpireIn()),
                         BasicAuthenticationFilter.class)
@@ -64,7 +83,7 @@ public class SecurityConfig {
                         BasicAuthenticationFilter.class)
                 .authorizeHttpRequests(
                         auth -> auth
-                                .requestMatchers("/register/**", "/login").permitAll()
+                                .requestMatchers("/register/**", "/login/**").permitAll()
                                 .requestMatchers("/admin/**").hasAuthority("ADMIN")
                                 .anyRequest().authenticated())
                 // .formLogin(Customizer.withDefaults())
@@ -73,6 +92,11 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Creates a CORS configuration source for the application.
+     *
+     * @return CORS configuration source
+     */    
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -85,11 +109,22 @@ public class SecurityConfig {
         return source;
     }
 
+    /**
+     * Creates a password encoder for the application.
+     *
+     * @return Password encoder
+     */
+  
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Creates a JWT decoder for the application.
+     *
+     * @return JWT decoder
+     */    
     @Bean
     public JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(publicKey).build();
@@ -129,5 +164,40 @@ public class SecurityConfig {
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
     }
+
+    @Value("${spring.mail.port}")
+    private int smtp_port = 587;
+
+    @Value("${spring.mail.host}")
+    private String host;
+
+    @Value("${spring.mail.username}")
+    private String user;
+
+    @Value("${spring.mail.password}")
+    private String password;
+
+
+    @Bean
+    public JavaMailSender getJavaMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        // Set up Gmail config
+        mailSender.setHost(host);
+        mailSender.setPort(smtp_port);
+
+        // Set up email config (using udeesa email)
+        mailSender.setUsername(user);
+        mailSender.setPassword(password);
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");        
+        return mailSender;
+    }
+
+
+
+
 
 }

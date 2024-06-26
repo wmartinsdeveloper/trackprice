@@ -46,6 +46,9 @@ public class Usuario implements UserDetails {
     @Column(name = "isEnabled")
     private boolean isEnabled;
 
+    @Column(name = "activationKey")
+    private String activationKey;    
+
     @JsonIgnore
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "Usario_Grupo", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "grupo_id"))
@@ -212,6 +215,18 @@ public class Usuario implements UserDetails {
         } else if (!grupo.equals(other.grupo))
             return false;
         return true;
+    }
+
+    public void setAccountNonLocked(boolean isAccountNonLocked) {
+        this.isAccountNonLocked = isAccountNonLocked;
+    }
+
+    public String getActivationKey() {
+        return activationKey;
+    }
+
+    public void setActivationKey(String activationKey) {
+        this.activationKey = activationKey;
     }
 
 }

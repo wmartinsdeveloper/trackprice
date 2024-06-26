@@ -11,10 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.agrotech.usersecurity.entities.Grupo;
+import com.agrotech.usersecurity.dto.dtoGrupo;
+import com.agrotech.usersecurity.dto.dtoUsuario;
 import com.agrotech.usersecurity.entities.Usuario;
 import com.agrotech.usersecurity.services.GrupoService;
 import com.agrotech.usersecurity.services.UsuarioService;
@@ -22,6 +22,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class ManagerUsersController {
@@ -82,7 +83,7 @@ public class ManagerUsersController {
      * 
      * @return a list of admin users
      */
-    @GetMapping("/admin/users")
+    @GetMapping("/admin/user/listall")
     public ResponseEntity listAllAdminUser() {
 
         try {
@@ -108,8 +109,8 @@ public class ManagerUsersController {
      * @param email the email of the user to retrieve
      * @return the user with the specified email
      */
-    @GetMapping("/admin/user/{email}")
-    public ResponseEntity listAdminUserByEmail(@PathVariable("email") String email) {
+    @GetMapping("/admin/user/list")
+    public ResponseEntity listAdminUserByEmail(@RequestParam("email") String email) {
 
         try {
             Usuario user = usuarioService.findByEmail(email);
@@ -117,14 +118,12 @@ public class ManagerUsersController {
                 return ResponseEntity.ok().body(user);
             } else {
                 return ResponseEntity.status(HttpStatus.OK)
-                        .cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS))
                         .body("User not found.");
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Something went wrong. Error message: " + e.getMessage());
         }
-
     }
 
         /**
@@ -133,8 +132,8 @@ public class ManagerUsersController {
      * @param email the email of the user to delete
      * @return a response indicating whether the user was deleted successfully
      */
-    @DeleteMapping("/admin/user/{email}")
-    public ResponseEntity deleteAdminUser(@PathVariable("email") String email) {
+    @DeleteMapping("/admin/user")
+    public ResponseEntity deleteAdminUser(@RequestParam("email") String email) {
 
         try {
             Usuario user = (Usuario) usuarioService.findByEmail(email);
@@ -159,8 +158,13 @@ public class ManagerUsersController {
      * @param email the email of the user to update
      * @return a response indicating whether the user was updated successfully
      */
-    @PutMapping("/admin/user/{email}")
-    public ResponseEntity updateAdminUser(@RequestBody Usuario usuario, @PathVariable("email") String email) {
+
+
+//======================> Continuar aqui
+
+
+    @PutMapping("/admin/user")
+    public ResponseEntity updateAdminUser(@RequestBody dtoUsuario usuario, @RequestParam("email") String email) {
 
         ResponseEntity response = null;
 
@@ -168,14 +172,14 @@ public class ManagerUsersController {
             Usuario savedUsuario = usuarioService.findByEmail(email);
 
             if (savedUsuario != null) {
-                savedUsuario.setUsername(usuario.getUsername());
-                savedUsuario.setEmail(usuario.getEmail());
-                savedUsuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+                savedUsuario.setUsername(usuario.username());
+                savedUsuario.setEmail(usuario.email());
+                savedUsuario.setPassword(passwordEncoder.encode(usuario.password()));
                 savedUsuario.setAccountNonExpired(usuario.isAccountNonExpired());
                 savedUsuario.setAccountNonLocked(usuario.isAccountNonLocked());
                 savedUsuario.setCredentialsNonExpired(usuario.isCredentialsNonExpired());
                 savedUsuario.setEnabled(usuario.isEnabled());
-                usuarioService.update(savedUsuario);
+                //usuarioService.update(savedUsuario);
                 response = ResponseEntity.status(HttpStatus.OK).body("User Updated.");
             } else {
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
@@ -197,18 +201,15 @@ public class ManagerUsersController {
      * @param email the email of the user to update
      * @return a response indicating whether the groups were updated successfully
      */
-    @PutMapping("/admin/user/grupo/{email}")
-    public ResponseEntity updateAdminUser(@RequestBody Set<Grupo> grupo, @PathVariable("email") String email) {
-
+    @PutMapping("/admin/user/grupo")
+    public ResponseEntity updateAdminUser(@RequestBody Set<dtoGrupo> grupo, @RequestParam("email") String email) {
+    
         ResponseEntity response = null;
 
         try {
-            Usuario savedUsuario = usuarioService.findByEmail(email);
 
-            if (savedUsuario != null) {
-                Set<Grupo> savedGrupo = grupo;
-                savedUsuario.setGrupo(savedGrupo); 
-                usuarioService.update(savedUsuario);
+            if (grupo != null && email != null) {
+                usuarioService.changegrupo(grupo,email);
                 response = ResponseEntity.status(HttpStatus.OK).body("Group of user Updated.");
             } else {
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Group of User not found.");
@@ -224,31 +225,29 @@ public class ManagerUsersController {
     }
 
 
-    @PutMapping("/user/changepassword/{email}")
-    public ResponseEntity changePasswordUser(@RequestBody Usuario usuario, @PathVariable("email") String email) {
+    @PutMapping("/admin/user/changepassword")
+    public ResponseEntity changePasswordUser(@RequestBody String password, @RequestParam("email") String email) {
 
         ResponseEntity response = null;
 
         try {
-            Usuario savedUsuario = usuarioService.findByEmail(email);
-
-            if (savedUsuario != null) {
-                savedUsuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-                usuarioService.update(savedUsuario);
-                response = ResponseEntity.status(HttpStatus.OK).body("Password Updated.");
+            
+            if (password != null && email != null) {
+                usuarioService.changePasswordUser(email, password);
+                response = ResponseEntity.status(HttpStatus.OK).body("Password changed successfully");
+                
             } else {
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
             }
 
         } catch (Exception e) {
             response = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error to update user." + e.getMessage());
+                    .body("Error to update user:<br>" + e.getMessage());
         }
 
-        return response;
+    return response;
 
     }
-
 
 
 
