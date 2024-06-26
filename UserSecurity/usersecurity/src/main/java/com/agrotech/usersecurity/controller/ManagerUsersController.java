@@ -50,22 +50,21 @@ public class ManagerUsersController {
      */
 
     @PostMapping("/admin/user/register")
-    public ResponseEntity registerAdminUser(@RequestBody Usuario usuario) {
+    public ResponseEntity registerAdminUser(@RequestBody dtoUsuario usuario) {
 
-        Usuario savedUsuario = null;
         ResponseEntity response = null;
 
         try {
 
-            if (usuarioService.findByEmail(usuario.getEmail()) != null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("Email already exists. Please, choose another one and try again !");
-            } else {
-                savedUsuario =  usuarioService.save(usuario, "ADMIN", true);
+             if (usuario != null) {
+                usuarioService.novoUsuario(usuario);
+                response = ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
 
-                if (savedUsuario.getId() != null) {
-                    response = ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
-                }
+            } else {                
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body("Json body is empity, fill up the content of json and try again !");
+                
+                
             }
 
         } catch (Exception e) {
@@ -87,7 +86,7 @@ public class ManagerUsersController {
     public ResponseEntity listAllAdminUser() {
 
         try {
-            List<Usuario> users = usuarioService.findAll();
+            List<Usuario> users = usuarioService.buscaTodosusuarios();
             if (users != null)
                 return ResponseEntity.ok().cacheControl(CacheControl.maxAge(60, TimeUnit.SECONDS)).body(users);
             else {
@@ -113,7 +112,7 @@ public class ManagerUsersController {
     public ResponseEntity listAdminUserByEmail(@RequestParam("email") String email) {
 
         try {
-            Usuario user = usuarioService.findByEmail(email);
+            Usuario user = usuarioService.buscaUsuarioEmail(email);
             if (user != null) {
                 return ResponseEntity.ok().body(user);
             } else {
@@ -126,7 +125,7 @@ public class ManagerUsersController {
         }
     }
 
-        /**
+    /**
      * Deletes an admin user by email.
      * 
      * @param email the email of the user to delete
@@ -136,9 +135,9 @@ public class ManagerUsersController {
     public ResponseEntity deleteAdminUser(@RequestParam("email") String email) {
 
         try {
-            Usuario user = (Usuario) usuarioService.findByEmail(email);
-            if (user != null) {
-                usuarioService.delete(user);
+            
+            if (email != null) {
+                usuarioService.deletaUsuario(email);
                 return ResponseEntity.ok().body("User was disabled.");
             } else {
                 return ResponseEntity.status(HttpStatus.OK)
@@ -156,12 +155,7 @@ public class ManagerUsersController {
      * 
      * @param usuario the updated user information
      * @param email the email of the user to update
-     * @return a response indicating whether the user was updated successfully
-     */
-
-
-//======================> Continuar aqui
-
+     * @return a response indicating whether the user was updated successfully    */
 
     @PutMapping("/admin/user")
     public ResponseEntity updateAdminUser(@RequestBody dtoUsuario usuario, @RequestParam("email") String email) {
@@ -169,17 +163,9 @@ public class ManagerUsersController {
         ResponseEntity response = null;
 
         try {
-            Usuario savedUsuario = usuarioService.findByEmail(email);
 
-            if (savedUsuario != null) {
-                savedUsuario.setUsername(usuario.username());
-                savedUsuario.setEmail(usuario.email());
-                savedUsuario.setPassword(passwordEncoder.encode(usuario.password()));
-                savedUsuario.setAccountNonExpired(usuario.isAccountNonExpired());
-                savedUsuario.setAccountNonLocked(usuario.isAccountNonLocked());
-                savedUsuario.setCredentialsNonExpired(usuario.isCredentialsNonExpired());
-                savedUsuario.setEnabled(usuario.isEnabled());
-                //usuarioService.update(savedUsuario);
+            if (usuario != null && email != null) {
+                usuarioService.atualizaUsuario(usuario, email);
                 response = ResponseEntity.status(HttpStatus.OK).body("User Updated.");
             } else {
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
@@ -209,7 +195,7 @@ public class ManagerUsersController {
         try {
 
             if (grupo != null && email != null) {
-                usuarioService.changegrupo(grupo,email);
+                usuarioService.alterGrupoUsuario(grupo, email);
                 response = ResponseEntity.status(HttpStatus.OK).body("Group of user Updated.");
             } else {
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("Group of User not found.");

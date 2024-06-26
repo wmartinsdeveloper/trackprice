@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.agrotech.usersecurity.dto.dtoGrupo;
+import com.agrotech.usersecurity.dto.dtoUsuario;
 import com.agrotech.usersecurity.entities.Grupo;
 import com.agrotech.usersecurity.entities.Usuario;
 import com.agrotech.usersecurity.repositories.UsuarioRepository;
@@ -27,12 +28,15 @@ public class UsuarioService {
     @Autowired
     private GrupoService grupoService;
 
-    public Usuario findByEmail(String email) throws UsernameNotFoundException, Exception {
+    @Autowired
+    MailService emailSender;
+
+    public Usuario buscaUsuarioEmail(String email) throws UsernameNotFoundException, Exception {
 
         try {
-            Usuario user = userRepository.findByEmail(email);
-            if (user != null) {
-                return user;
+            Usuario savedUsuario = userRepository.findByEmail(email);
+            if (savedUsuario != null) {
+                return savedUsuario;
             } else {
                 return null;
             }
@@ -42,7 +46,7 @@ public class UsuarioService {
 
     }
 
-    public List<Usuario> findAll() throws UsernameNotFoundException, Exception {
+    public List<Usuario> buscaTodosusuarios() throws UsernameNotFoundException, Exception {
 
         try {
             List<Usuario> user = userRepository.findAll();
@@ -57,43 +61,86 @@ public class UsuarioService {
 
     }
 
-    public Usuario save(Usuario usuario, String grupo, boolean isEnabled) {
+    public void novoUsuario(dtoUsuario usuario) throws Exception{
 
-        Grupo grupoUsr = grupoService.findByNome(grupo);
+        Usuario savedUsuario = userRepository.findByEmail(usuario.email());
+        if (savedUsuario == null){
+            savedUsuario = new Usuario();            
+            savedUsuario.setEmail(usuario.email());
+            savedUsuario.setUsername(usuario.username());
+            savedUsuario.setPassword(passwordEncoder.encode(usuario.password()));
+            savedUsuario.setAccountNonExpired(usuario.isAccountNonExpired());
+            savedUsuario.setAccountNonLocked(usuario.isAccountNonLocked());
+            savedUsuario.setCredentialsNonExpired(usuario.isCredentialsNonExpired());
+            savedUsuario.setEnabled(false);
+            savedUsuario.setActivationKey(UUID.randomUUID().toString());
+            savedUsuario.setGrupo(Set.of(grupoService.findByNome("USERS")));
+            userRepository.save(savedUsuario);
+            emailSender.sendEmailRegister(savedUsuario);
+        }else{
+            throw new Exception("User already exists, Please, choose another one and try again ! ");
 
-        usuario.setAccountNonExpired(true);
-        usuario.setAccountNonLocked(true);
-        usuario.setCredentialsNonExpired(true);
-        usuario.setEnabled(isEnabled);
-        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        usuario.setActivationKey(UUID.randomUUID().toString());
-        usuario.setGrupo(Set.of(grupoUsr));
-
-        return userRepository.save(usuario);
+        }
 
     }
 
-    public void delete(Usuario usuario) {
-        usuario.setEnabled(false);
-        userRepository.save(usuario);
+    public void deletaUsuario(String email) throws UsernameNotFoundException, Exception  {
+        Usuario savedUsuario = buscaUsuarioEmail(email);
+        if (savedUsuario != null) {
+            savedUsuario.setEnabled(false);
+            userRepository.save(savedUsuario);        
+        
+            }else{
+                throw new UsernameNotFoundException("User not found: "+email);
+            }
     }
 
-    // public void update(Usuario savedUsuario) {
-    //     userRepository.save(savedUsuario);
-    // }
+    public void atualizaUsuario(dtoUsuario usuario, String email) throws UsernameNotFoundException, Exception {
 
-    public void activeUser(Usuario usuario, String uuid) {
+        Usuario savedUsuario = buscaUsuarioEmail(email);
+        if (savedUsuario != null){            
+            savedUsuario.setUsername(usuario.username());
+            savedUsuario.setEmail(usuario.email());
+            savedUsuario.setPassword(passwordEncoder.encode(usuario.password()));
+            savedUsuario.setAccountNonExpired(usuario.isAccountNonExpired());
+            savedUsuario.setAccountNonLocked(usuario.isAccountNonLocked());
+            savedUsuario.setCredentialsNonExpired(usuario.isCredentialsNonExpired());
+            savedUsuario.setEnabled(usuario.isEnabled());
+            userRepository.save(savedUsuario);
+        }else{
+            throw new UsernameNotFoundException("User not found: "+usuario.email());
+        }
+    }
 
-        if (usuario.getActivationKey() == uuid){   
-            usuario.setEnabled(true);
-            userRepository.save(usuario);
-        }    
-    
+    public void activeUser(String email, String uuid) throws UsernameNotFoundException, Exception {
+        Usuario savedUsuario = buscaUsuarioEmail(email.trim());
+        
+        if ( savedUsuario != null){
+            if (savedUsuario.isEnabled() == false){
+                String aux = savedUsuario.getActivationKey().trim();
+                if (aux.equalsIgnoreCase(uuid)) {
+                        savedUsuario.setEnabled(true);
+                        savedUsuario.setAccountNonExpired(true);
+                        savedUsuario.setAccountNonLocked(true);
+                        savedUsuario.setCredentialsNonExpired(true);
+                        userRepository.save(savedUsuario);
+                }
+                else{
+                    throw new Exception("Invalid activation key ord user already actived !");
+                    }
+                }    
+            else{
+                    throw new UsernameNotFoundException("User already actived: "+email);
+                }      
+            } 
+        else{
+             throw new UsernameNotFoundException("User not found: "+email);
+            }    
     }
 
     public void changePasswordUser(String email, String password) throws UsernameNotFoundException, Exception {
 
-        Usuario usuario = findByEmail(email);
+        Usuario usuario = buscaUsuarioEmail(email);
         if (usuario != null){
            usuario.setPassword(passwordEncoder.encode(password));
            userRepository.save(usuario);
@@ -103,8 +150,8 @@ public class UsuarioService {
 
     }
 
-    public void changegrupo(Set<dtoGrupo> grupo, String email) throws UsernameNotFoundException, Exception {
-       Usuario usuario = findByEmail(email);
+    public void alterGrupoUsuario(Set<dtoGrupo> grupo, String email) throws UsernameNotFoundException, Exception {
+       Usuario usuario = buscaUsuarioEmail(email);
 
         if (usuario != null){
             Set<Grupo> grupoUser = new HashSet<>();

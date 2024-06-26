@@ -35,7 +35,7 @@ public class AuthenticationProviderService implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         try {
-            UserDetails user = usuarioService.findByEmail(authentication.getName());
+            UserDetails user = usuarioService.buscaUsuarioEmail(authentication.getName());
             if (user != null) {
                 if (passwordEncoder.matches((String) authentication.getCredentials(), user.getPassword())) {
                     return new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities());

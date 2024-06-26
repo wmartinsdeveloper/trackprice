@@ -2,26 +2,16 @@ package com.agrotech.usersecurity.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import com.agrotech.usersecurity.entities.Usuario;
+import com.agrotech.usersecurity.dto.dtoUsuario;
 import com.agrotech.usersecurity.services.AuthenticationProviderService;
 import com.agrotech.usersecurity.services.MailService;
 import com.agrotech.usersecurity.services.UsuarioService;
 
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
-
-import java.io.UnsupportedEncodingException;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -108,22 +98,21 @@ public class AuthenticationController {
      */
 
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody Usuario usuario) {
+    public ResponseEntity<String> registerUser(@RequestBody dtoUsuario usuario) {
 
         ResponseEntity response = null;
-       
+
         try {
 
-            if (usuarioService.findByEmail(usuario.getEmail()) != null) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("Email already exists. Please, choose another one and try again !");
-            } else {
-                Usuario savedUsuario = usuarioService.save(usuario, "USERS", false);
-                emailSender.sendEmailRegister(usuario, savedUsuario.getActivationKey());
+             if (usuario != null) {
+                usuarioService.novoUsuario(usuario);
+                response = ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
 
-                if (savedUsuario.getId() != null) {
-                    response = ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
-                }
+            } else {                
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body("Json body is empity, fill up the content of json and try again !");
+                
+                
             }
 
         } catch (Exception e) {
@@ -142,11 +131,11 @@ public class AuthenticationController {
         ResponseEntity response = null;
        
         try {
-                Usuario savedUsuario = usuarioService.findByEmail(email);
-
-            if (savedUsuario != null) {
-                usuarioService.activeUser(savedUsuario, uuid);  
+            
+            if (email != null && uuid != null) {
+                usuarioService.activeUser(email, uuid);  
                 response =  ResponseEntity.status(HttpStatus.OK).body("User actived successfully");
+
             } else {
                 response = ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
                 }

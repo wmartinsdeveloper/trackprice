@@ -44,14 +44,12 @@ public class MailService {
 
     }
 
-    public void sendEmailRegister(Usuario usuario, String uuid) throws MessagingException, UnsupportedEncodingException {
-
-        
+    public void sendEmailRegister(Usuario usuario) throws MessagingException, UnsupportedEncodingException {
         String subject = "Confirmação de Cadastro - Cotação de Preço";
         String content = "<p>Olá "+ usuario.getUsername()+ ",</p><br><br><br>"+
                           "<p>Você está recebendo esse e-mail para a efetivação do seu cadastro no nosso sistema de cotação de preço.<BR> "+
                           "Click no link abaixo para ativar o seu email."+
-                          "<p><a href='"+activeLink+"email="+ usuario.getEmail()+"&uuid="+uuid+"'>Ativar Email</p>";
+                          "<p><a href='"+activeLink+"email="+ usuario.getEmail()+"&uuid="+usuario.getActivationKey()+"'>Ativar Email</p>";
         
         sendEmail( usuario.getEmail(),  subject,  content);
 
